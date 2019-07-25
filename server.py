@@ -5,6 +5,9 @@ The script uses Scapy as the tool to manage packets, and requires Scapy be insta
 
 This script listens for network traffics from the client IP address sent to the open ports of the server.
 
+Implementation based onthe article "Application of Perfectly Undetectable Network Steganography Method for Malware
+Hidden Communication" by K. Szczypiorski, et al.
+
 Author: Tim Lei
 """
 
@@ -19,8 +22,8 @@ DST_IP = '127.0.0.1'
 GATEKEEPER = [65300, 65301]
 PORTS = [65302, 65303, 65304, 65305, 65306, 65307, 65308]
 ENDPORT = 65309
-decode = {0:'0', 1:'1', 2:'2', 3:'3', 4:'4', 5:'5', 6:'6', 7:'7', 8:'8', 9:'9', 10:' ', 11:'.', 12:'\n', 13:'a', 14:'b', 15:'c', 16:'d', 17:'e', 18:'f', 19:'g', 20:'h', 21:'i', 22:'j', 23:'k', 24:'l', 25:'m',
-        26:'n', 27:'o', 28:'p', 29:'q', 30:'r', 31:'s', 32:'t', 33:'u', 34:'v', 35:'w', 36:'x', 37:'y', 38:'z'}
+decode = {0:' ', 1:'a', 2:'e', 3:'o', 4:'i', 5:'z', 6:'n', 7:'s', 8:'r', 9:'w', 10:'c', 11:'d', 12:'y', 13:'k', 14:'l', 15:'m',
+          16:'t', 17:'p', 18:'u', 19:'j', 20:'b', 21:'g', 22:'h', 23:'f', 24:'v', 25:'x', 26:'q'}
 
 packet_counts = Counter()       # Create a Packet Counter
 f = open('result.txt', 'a+')

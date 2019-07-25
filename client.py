@@ -7,6 +7,9 @@ The script reads captured packets and opens the text file of information to be s
 It modifies the IP address and ports of the captured packets and send to the server's open ports. Two open ports of the server are selected as gatekeeper to divide the packets into blocks.
 Packets send between the gatekeepers are assigned a random open port of the server to send through.
 
+Implementation based onthe article "Application of Perfectly Undetectable Network Steganography Method for Malware
+Hidden Communication" by K. Szczypiorski, et al.
+
 Author: Tim Lei
 """
 
@@ -21,8 +24,8 @@ DST_IP = '127.0.0.1'
 GATEKEEPER = [65300, 65301]
 PORTS = [65302, 65303, 65304, 65305, 65306, 65307, 65308]
 ENDPORT = 65309
-encode = {'0':0, '1':1, '2':2, '3':3, '4':4, '5':5, '6':6, '7':7, '8':8, '9':9, ' ':10, '.':11, '\n':12, 'a':13, 'b':14, 'c':15, 'd':16, 'e':17, 'f':18, 'g':19, 'h':20, 'i':21, 'j':22, 'k':23, 'l':24, 'm':25,
-        'n':26, 'o':27, 'p':28, 'q':29, 'r':30, 's':31, 't':32, 'u':33, 'v':34, 'w':35, 'x':36, 'y':37, 'z':38}
+encode = {' ':0, 'a':1, 'e':2, 'o':3, 'i':4, 'z':5, 'n':6, 's':7, 'r':8, 'w':9, 'c':10, 'd':11, 'y':12, 'k':13, 'l':14, 'm':15,
+          't':16, 'p':17, 'u':18, 'j':19, 'b':20, 'g':21, 'h':22, 'f':23, 'v':24, 'x':25, 'q':26}
 
 # Send packets
 packets = rdpcap('test.pcap')
@@ -56,7 +59,7 @@ with open('test.txt') as f:
 
         # Send the number of packets required after encoding
         packet_counter = 0
-        size = encode[char]
+        size = encode[char.lower()]
         while(packet_counter != size):
             packets[packet_iter]['IP'].dst = DST_IP
             i = random.randrange(len(PORTS))
