@@ -16,20 +16,40 @@ Author: Tim Lei
 import time
 from scapy.all import *
 
-# IP addresses, gatekeeper ports, open ports of server, and encode table
+# IP addresses, gatekeeper ports, open ports and endport of server
 SRC_IP = '127.0.0.1'
 DST_IP = '127.0.0.1'
 GATEKEEPER = [65320, 65321]
 PORTS = [65322, 65323, 65324, 65325, 65326, 65327, 65328]
 ENDPORT = 65329
 
+# Calculate how many packets required to send a character
+def packet_calc(char):
+    if not char:
+        return 1
+    sum = 0
+    charint = ord(char)
+    if len(str(charint)) == 1:
+        sum += 4
+    elif len(str(charint)) == 2:
+        sum += 2
+    while True:
+        last = charint % 10
+        sum = sum + last + 2
+        if (charint // 10 == 0):
+            break
+        charint = charint // 10
+    return sum + 1
+
 # Send packets
-packets = rdpcap('testpackets6.pcap')
-packet_iter = 0
-with open('testcase4.txt') as f:
+count = 0
+with open('testcase1.txt') as f:
     while True:
         # Read one character at a time
         char = f.read(1)
+
+        packets = rdpcap('testpackets3.pcap', count = packet_calc(char))
+        packet_iter = 0
 
         # Reach end of file, send a packet to the end-port
         if not char:
@@ -41,6 +61,7 @@ with open('testcase4.txt') as f:
             packets[packet_iter].show2(dump=True)
             send(packets[packet_iter][IP])
             packet_iter += 1
+            count += 1
             break
 
         rep = str(ord(char)).zfill(3)
@@ -54,6 +75,7 @@ with open('testcase4.txt') as f:
             packets[packet_iter].show2(dump= True)
             send(packets[packet_iter][IP])
             packet_iter += 1
+            count += 1
 
             # Send the number of packets required after encoding
             packet_counter = 0
@@ -69,6 +91,7 @@ with open('testcase4.txt') as f:
                 send(packets[packet_iter][IP])
                 packet_iter += 1
                 packet_counter += 1
+                count += 1
 
             # Second gatekeeper
             packets[packet_iter]['IP'].dst = DST_IP
@@ -79,4 +102,7 @@ with open('testcase4.txt') as f:
             packets[packet_iter].show2(dump=True)
             send(packets[packet_iter][IP])
             packet_iter += 1
+            count += 1
+
+print(count)
 f.close()

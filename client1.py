@@ -16,31 +16,43 @@ Author: Tim Lei
 import time
 from scapy.all import *
 
-# IP addresses, gatekeeper ports, open ports of server, and encode table
+# IP addresses, gatekeeper ports, open ports and endport of server
 SRC_IP = '127.0.0.1'
 DST_IP = '127.0.0.1'
 GATEKEEPER = [65300, 65301]
 PORTS = [65302, 65303, 65304, 65305, 65306, 65307, 65308]
 ENDPORT = 65309
 
+# Calculate how many packets required to send a character
+def packet_calc(char):
+    if not char:
+        return 1
+    sum = 0
+    charint = ord(char)
+    if len(str(charint)) == 1:
+        sum += 4
+    elif len(str(charint)) == 2:
+        sum += 2
+    while True:
+        last = charint % 10
+        sum = sum + last + 2
+        if (charint // 10 == 0):
+            break
+        charint = charint // 10
+    return sum + 1
+
 # Send packets
-packets = rdpcap('testpackets4.pcap')
-packet_iter = 0
-with open('testcase4.txt') as f:
+count = 0
+with open('testcase1.txt') as f:
     while True:
         # Read one character at a time
         char = f.read(1)
 
+        packets = rdpcap('testpackets1.pcap', count = packet_calc(char))
+        packet_iter = 0
+
         # Reach end of file, send a packet to the end-port
         if not char:
-            # packets_iterator['IP'].dst = DST_IP
-            # packets_iterator['IP'].dport = ENDPORT
-            # packets_iterator['IP'].src = SRC_IP
-            # del packets_iterator['IP'].chksum
-            # del packets_iterator['TCP'].chksum
-            # packets_iterator.show2(dump=True)
-            # send(packets_iterator[IP])
-            # packets_iterator = packets_iterator.next()
             packets[packet_iter]['IP'].dst = DST_IP
             packets[packet_iter]['TCP'].dport = ENDPORT
             packets[packet_iter]['IP'].src = SRC_IP
@@ -49,18 +61,11 @@ with open('testcase4.txt') as f:
             packets[packet_iter].show2(dump=True)
             send(packets[packet_iter][IP])
             packet_iter += 1
+            count += 1
             break
 
         rep = str(ord(char)).zfill(3)
         for each_char in rep:
-            # packets_iterator['IP'].dst = DST_IP
-            # packets_iterator['IP'].dport = GATEKEEPER[0]
-            # packets_iterator['IP'].src = SRC_IP
-            # del packets_iterator['IP'].chksum
-            # del packets_iterator['TCP'].chksum
-            # packets_iterator.show2(dump=True)
-            # send(packets_iterator[IP])
-            # packets_iterator = packets_iterator.next()
             # First gatekeeper
             packets[packet_iter]['IP'].dst = DST_IP
             packets[packet_iter]['TCP'].dport = GATEKEEPER[0]
@@ -70,20 +75,12 @@ with open('testcase4.txt') as f:
             packets[packet_iter].show2(dump= True)
             send(packets[packet_iter][IP])
             packet_iter += 1
+            count += 1
 
             # Send the number of packets required after encoding
             packet_counter = 0
             size = int(each_char)
             while(packet_counter != size):
-                # packets_iterator['IP'].dst = DST_IP
-                # i = random.randrange(len(PORTS))
-                # packets_iterator['IP'].dport = PORTS[i]
-                # packets_iterator['IP'].src = SRC_IP
-                # del packets_iterator['IP'].chksum
-                # del packets_iterator['TCP'].chksum
-                # packets_iterator.show2(dump=True)
-                # send(packets_iterator[IP])
-                # packets_iterator = packets_iterator.next()
                 packets[packet_iter]['IP'].dst = DST_IP
                 i = random.randrange(len(PORTS))
                 packets[packet_iter]['TCP'].dport = PORTS[i]
@@ -94,16 +91,9 @@ with open('testcase4.txt') as f:
                 send(packets[packet_iter][IP])
                 packet_iter += 1
                 packet_counter += 1
+                count += 1
 
             # Second gatekeeper
-            # packets_iterator['IP'].dst = DST_IP
-            # packets_iterator['IP'].dport = GATEKEEPER[1]
-            # packets_iterator['IP'].src = SRC_IP
-            # del packets_iterator['IP'].chksum
-            # del packets_iterator['TCP'].chksum
-            # packets_iterator.show2(dump=True)
-            # send(packets_iterator[IP])
-            # packets_iterator = packets_iterator.next()
             packets[packet_iter]['IP'].dst = DST_IP
             packets[packet_iter]['TCP'].dport = GATEKEEPER[1]
             packets[packet_iter]['IP'].src = SRC_IP
@@ -112,5 +102,7 @@ with open('testcase4.txt') as f:
             packets[packet_iter].show2(dump=True)
             send(packets[packet_iter][IP])
             packet_iter += 1
+            count += 1
 
+print(count)
 f.close()

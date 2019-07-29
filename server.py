@@ -5,9 +5,6 @@ The script uses Scapy as the tool to manage packets, and requires Scapy be insta
 
 This script listens for network traffics from the client IP address sent to the open ports of the server.
 
-Implementation based onthe article "Application of Perfectly Undetectable Network Steganography Method for Malware
-Hidden Communication" by K. Szczypiorski, et al.
-
 Author: Tim Lei
 """
 
@@ -15,6 +12,7 @@ Author: Tim Lei
 
 from scapy.all import *
 from collections import Counter
+import time
 
 # IP addresses, gatekeeper ports, open ports of server, and decode table
 SRC_IP = '127.0.0.1'
@@ -65,4 +63,6 @@ def main():
     f.close()
 
 if __name__== "__main__":
-  main()
+    start_time = time.time()
+    main()
+    print(time.time() - start_time)

@@ -74,9 +74,6 @@ def stopfilter(packet):
     if (end_of_client1 == True and end_of_client2 == True and end_of_client3 == True):
         return True
 
-    # if (end_of_client1 == True):
-    #     return True
-
     # Sum up the number of packets send through the gatekeeper ports,
     # write the result to text file and resets the packet counter
     if (packet['TCP'].dport == GATEKEEPER1[1]):
@@ -110,7 +107,7 @@ def main():
     sniff(filter="ip host 127.0.0.1", prn=custom_action, stop_filter=stopfilter)
 
 
-if __name__== "__main__":
+if __name__== '__main__':
     start_time = time.time()
     main()
     print(time.time() - start_time)
